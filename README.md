@@ -9,3 +9,5 @@ Script takes two parameters :
 In case when call duration exceeds the entered value - script will show the call-id of this call.
 It possible to use cdc.py without parameters in order to see list of the ip addresses of the available sip envs
 on the current sip server.
+
+It seems it is rare used stuff, I've made just for practicing.
