@@ -6,13 +6,13 @@ import telnetlib as t
 
 '''
 Duration calls checker
-In order to download :  wget --content-disposition http://pastebin.com/download.php?i=4GZPuFda
  
 22.09.2014 - Telnet session was added
+How to use : python calls.py <sipenv ip> <duration>
+Example : python calls.py 123.123.123.123 600
 '''
  
 def show_sip_envs():
-    print('Available sip envs :\n')
     with open('/usr/local/etc/active_sipenvs.conf') as file:
         for sipenv in file:
             print sipenv.rstrip()
@@ -40,12 +40,7 @@ if __name__ == "__main__":
     import sys
     if sys.argv.__len__() <= 2 or sys.argv.__len__() > 3 :
         show_sip_envs()
-        print '''\nHow to use :\n python calls.py <sipenv ip> <duration>'''
-        print '''Example : python calls.py 123.123.123.123 600'''
     elif sys.argv.__len__() == 3:  # script with 2 parameters
         if not sys.argv[2].isalpha():
             duration_checker(sys.argv[1], int(sys.argv[2]))
         else : print 'Invalid argument!'
-
-
-
