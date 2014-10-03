@@ -34,7 +34,7 @@ def duration_checker(host, duration=600):
     calls = dict(zip(uptime, call_id))
 
     for i in calls:
-        if args.show == True:
+        if args.show is True:
             print '{call_id} : {duration}'.format(duration=i, call_id=calls[i])
             time.sleep(0.1)
         else : 
@@ -52,7 +52,7 @@ def duration_checker(host, duration=600):
 if __name__ == "__main__":
     import sys
     import argparse
-    if sys.argv.__len__() == 1 :
+    if len(sys.argv) == 1 :
         show_sip_envs()
     else:
         p = argparse.ArgumentParser(description='Call Monitor v.2')
@@ -61,7 +61,7 @@ if __name__ == "__main__":
         p.add_argument("--show", action='store_true', help="It will show call_id and duration")
         p.add_argument("--disconnect", action='store_true', help="This option will disconnect the calls. Be careful!")
         args = p.parse_args()
-        if args.ip == None : 
+        if args.ip is None : 
             print 'IP address of the sipenv is required !'
             sys.exit(0)
         else:
