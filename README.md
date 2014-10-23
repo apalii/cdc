@@ -1,7 +1,7 @@
-cdc
+hcc
 ===
 
-Duration calls checker - it is a simple script which allows to check some calls with long duration.
+Hunged calls checker - it is a simple script which allows to check some calls with long duration.
 Script takes the following parameters :
 1) --ip/-i - IP address of the needed sip environment
 2) --duration/-d - Max allowed duration of the call
@@ -10,11 +10,12 @@ Script takes the following parameters :
                       /You have additional 5 second to abort it/
 5) --debug - writes some additional information to the log file(/home/porta-one/call_monitor.log)
 
-It possible to use cdc.py without parameters in order to see list of the ip addresses of the available sip envs
+It possible to use hcc.py without parameters in order to see list of the ip addresses of the available sip envs
 on the current sip server.
 
 It seems it is rare used stuff, I've made just for practicing.
 
+23.10.2014 - getting durations from the config files, remaming to the hcc
 10.10.2014 - PEP8 fixes
 07.10.2014 - logging
 01.10.2014 - normal processing of the parameters and disconnecting were added
@@ -27,3 +28,6 @@ Examples :
 > sudo python2.7 cdc.py --ip 192.168.197.114 -d 60 --debug --disconnect
 
 Will disconnect all calls with duration more then 60 seconds with debuging information. 
+
+How to download script on the particular server ?
+wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/apalii/hcc/master/cdc.py
