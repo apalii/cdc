@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 try:
     handler = logging.FileHandler('/home/porta-one/call_monitor.log')
 except IOError as e:
-    print "({})".format(e)
+    print '( {} )'.format(e)
+    sys.exit(0)
 formatter = logging.Formatter(u'%(asctime)s [LINE:%(lineno)d] %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -29,10 +30,35 @@ def show_sip_envs():
                 print sipenv.rstrip()
     else:
         logger.debug('Can not find %s', sipenvs)
+        sys.exit(0)
+
+
+def get_durations():
+    sipenvs = '/usr/local/etc/active_sipenvs.conf'
+    conf_paths = []
+    durations = [] 
+    ips = []
+    if os.path.isfile(sipenvs):
+        with open(sipenvs) as active_sipenvs_conf:
+            for ip in active_sipenvs_conf:
+                conf_paths.append('/porta_var/sipenv-' + ip.rstrip() + '/etc/b2bua.conf')
+                ips.append(ip.rstrip())
+    else:
+        logger.debug('Can not find %s', sipenvs)
+        sys.exit(0)
+    for config in conf_paths:
+        with open(config) as config_file:
+            for line in config_file:
+                if not line.startswith('max_credit_time'):
+                    continue
+                else:
+                    durations.append(line.rstrip().split("=")[1])
+    ips_durations = dict(zip(ips, durations))
+    return ips_durations 
 
 
 def duration_checker(host, duration=600):
-    '''Parse and collect uptime and call ids'''
+    '''Collect uptime and call_ids'''
     uptime_list, call_id_list = [], []
     try:
         telnet = t.Telnet(host, "5064")
@@ -45,10 +71,10 @@ def duration_checker(host, duration=600):
                     call_id = re.findall('(^\S+@\S+):', i)
                     call_id_list.append(''.join(call_id))
         calls = dict(zip(uptime_list, call_id_list))
-        logger.debug('Connection with [%s] is established', host)
+        logger.debug('Connection to [%s] is established', host)
     except IOError as e:
-        print "({})".format(e)
-        logger.debug('Connection with [%s] is not established', host)
+        print '( {} )'.format(e)
+        logger.debug('Connection to [%s] is not established', host)
 
     for i in calls:
         if args.show is True:
