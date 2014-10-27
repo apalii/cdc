@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 '''
-Call monitor
+Hung call checker v.4
 *python 2.7 or higher is required'''
 import re
 import telnetlib as t
@@ -34,6 +34,7 @@ def show_sip_envs():
 
 
 def get_durations():
+    '''Return dict with ips of the sip envs as keys and max_credit_time value as values '''
     sipenvs = '/usr/local/etc/active_sipenvs.conf'
     conf_paths = []
     durations = [] 
@@ -49,15 +50,14 @@ def get_durations():
     for config in conf_paths:
         with open(config) as config_file:
             for line in config_file:
-                if not line.startswith('max_credit_time'):
-                    continue
-                else:
-                    durations.append(line.rstrip().split("=")[1])
+                if line.startswith('max_credit_time'):
+                    durations.append(line.rstrip()[16:])
+                    break
     ips_durations = dict(zip(ips, durations))
     return ips_durations 
 
 
-def duration_checker(host, duration=600):
+def duration_checker(host, duration=14440):
     '''Collect uptime and call_ids'''
     uptime_list, call_id_list = [], []
     try:
@@ -75,13 +75,19 @@ def duration_checker(host, duration=600):
     except IOError as e:
         print '( {} )'.format(e)
         logger.debug('Connection to [%s] is not established', host)
+        sys.exit(0)
 
-    for i in calls:
-        if args.show is True:
-            print '{call_id} : {duration}'.format(duration=i, call_id=calls[i])
-            time.sleep(0.1)
-        else:
-            print calls[i]
+    print "SIP {} | Analyzing calls ...".format(host)
+    time.sleep(1)
+    if len(calls) == 0:
+        print "There are no calls which exceed the specified duration"
+    else:     
+        for i in calls:
+            if args.show is True:
+                print '{call_id} : {duration}'.format(duration=i, call_id=calls[i])
+                time.sleep(0.1)
+            else:
+                print calls[i]
 
     if args.disconnect:
         print '\nCalls will be disconnected in 5 seconds ! \
@@ -100,10 +106,10 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         show_sip_envs()
     else:
-        parser = argparse.ArgumentParser(description='Call Monitor v.2')
+        parser = argparse.ArgumentParser(description='Hung call checker v.3')
         parser.add_argument("--ip", "-i", type=str,
                             help="Ip address of the sip env")
-        parser.add_argument("--duration", "-d", type=int, default=600)
+        parser.add_argument("--duration", "-d", type=int)
         parser.add_argument("--show", action='store_true',
                             help="Shows call_id and duration")
         parser.add_argument("--disconnect", action='store_true',
@@ -114,8 +120,12 @@ if __name__ == "__main__":
             logger.setLevel(logging.DEBUG)
         else:
             logger.setLevel(logging.INFO)
-        if args.ip is None:
-            print 'IP address of the sipenv is required !'
-            sys.exit(0)
-        else:
+        if args.ip is None and args.duration is None :
+            for ip, dur in get_durations().items():
+                duration_checker(ip, dur)
+        if (args.ip is None and args.duration is not None) or \
+           (args.ip is not None and args.duration is None):
+            print "ip or duration is missing !\nUse --help"
+        if args.ip is not None and args.duration is not None:
             duration_checker(args.ip, args.duration)
+            
