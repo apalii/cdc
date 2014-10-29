@@ -9,6 +9,19 @@ import telnetlib as t
 import time
 import logging
 import os.path
+import sys
+import argparse
+
+parser = argparse.ArgumentParser(description='Hung call checker v.3')
+parser.add_argument("--ip", "-i", type=str,
+                    help="Ip address of the sip env")
+parser.add_argument("--duration", "-d", type=int)
+parser.add_argument("--show", action='store_true',
+                    help="Shows call_id and duration")
+parser.add_argument("--disconnect", action='store_true',
+                    help="This option will disconnect the calls.")
+parser.add_argument("--debug", action='store_true', help="Debug")
+args = parser.parse_args()
 
 logger = logging.getLogger(__name__)
 try:
@@ -19,7 +32,12 @@ except IOError as e:
 formatter = logging.Formatter(u'%(asctime)s [LINE:%(lineno)d] %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
-
+if args.debug:
+    logger.setLevel(logging.DEBUG)
+    logger.debug('-' * 40)
+    logger.debug(args)
+else:
+    logger.setLevel(logging.INFO)
 
 def show_sip_envs():
     ''' Shows sipenvs'''
@@ -33,8 +51,9 @@ def show_sip_envs():
         sys.exit(0)
 
 
-def get_durations():
-    '''Return dict with ips of the sip envs as keys and max_credit_time value as values '''
+def get_durations(): 
+    '''Return dict with ips of the sip envs as keys and 
+    max_credit_time value as values '''
     sipenvs = '/usr/local/etc/active_sipenvs.conf'
     conf_paths = []
     durations = [] 
@@ -45,7 +64,7 @@ def get_durations():
                 conf_paths.append('/porta_var/sipenv-' + ip.rstrip() + '/etc/b2bua.conf')
                 ips.append(ip.rstrip())
     else:
-        logger.debug('Can not find %s', sipenvs)
+        logger.debug('%s file not found', sipenvs)
         sys.exit(0)
     for config in conf_paths:
         with open(config) as config_file:
@@ -101,25 +120,9 @@ def duration_checker(host, duration=14440):
     logger.debug('Telnet connection to %s is closed', host)
 
 if __name__ == "__main__":
-    import sys
-    import argparse
     if len(sys.argv) == 1:
         show_sip_envs()
     else:
-        parser = argparse.ArgumentParser(description='Hung call checker v.3')
-        parser.add_argument("--ip", "-i", type=str,
-                            help="Ip address of the sip env")
-        parser.add_argument("--duration", "-d", type=int)
-        parser.add_argument("--show", action='store_true',
-                            help="Shows call_id and duration")
-        parser.add_argument("--disconnect", action='store_true',
-                            help="This option will disconnect the calls.")
-        parser.add_argument("--debug", action='store_true', help="Debug")
-        args = parser.parse_args()
-        if args.debug:
-            logger.setLevel(logging.DEBUG)
-        else:
-            logger.setLevel(logging.INFO)
         if args.ip is None and args.duration is None :
             for ip, dur in get_durations().items():
                 duration_checker(ip, dur)
@@ -128,4 +131,3 @@ if __name__ == "__main__":
             print "ip or duration is missing !\nUse --help"
         if args.ip is not None and args.duration is not None:
             duration_checker(args.ip, args.duration)
-            
