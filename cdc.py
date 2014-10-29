@@ -128,3 +128,4 @@ if __name__ == "__main__":
             print "ip or duration is missing !\nUse --help"
         if args.ip is not None and args.duration is not None:
             duration_checker(args.ip, args.duration)
+            
