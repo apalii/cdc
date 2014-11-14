@@ -15,6 +15,8 @@ on the current sip server.
 
 *It seems it is rare used stuff, I've it made just for practicing.
 
+14.11.2014 - better performance using re.compile, reduced timeout in Telnet,
+             handling exeptions, some minor improvements.
 26.10.2014 - added previous ability to specify --ip and --duration
              if ip or durations was missed script will catch it
              some improvements with reading files
@@ -38,3 +40,22 @@ Examples :
 
 > How to download script on the particular server ?
 wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/apalii/hcc/master/hcc.py
+
+> The same for all SIP servers ?
+
+for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
+do
+    echo -e "\n\n---Master server: $i---\n"
+    rsh_porta.sh $i '
+    wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/apalii/hcc/master/hcc.py'
+done
+
+> How I can disconnect calls with exceeded  duration ?
+
+for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
+do
+    echo -e "\n\n---Master server: $i---\n"
+    rsh_porta.sh $i '
+    sudo python2.7 hcc.py --debug --disconnect'
+done
+
