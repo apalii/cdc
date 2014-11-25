@@ -54,7 +54,7 @@ done
 
 for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
 do
-    echo -e "\n\n---Master server: $i---\n"
+    echo -e "\n\n---Server: $i---\n"
     rsh_porta.sh $i '
     sudo python2.7 hcc.py --debug --disconnect'
 done
