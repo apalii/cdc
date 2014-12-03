@@ -1,7 +1,7 @@
-# Hunged calls checker 
+# Hung calls checker 
 
 
-Hunged calls checker - it is a simple script which allows to check some calls with exceeded duration.
+Hung calls checker - it is a simple script which allows to check some calls with exceeded duration.
 Script takes the following parameters :
 ```
 1) --ip/-i - IP address of the needed sip environment
@@ -24,23 +24,23 @@ on the current sip server.
 ```bash
 sudo python2.7 hcc.py
 ```
-- without parameters it will show all sip envs on the current server
+without parameters it will show all sip envs on the current server
 
 ```bash
 sudo python2.7 hcc.py --ip 192.168.197.114 -d 600 --debug --disconnect
 ```
--will disconnect all calls with duration more then 60 seconds with debuging information. 
+will disconnect all calls with duration more then 60 seconds with debuging information. 
 
 ```bash
 sudo python2.7 hcc.py --debug --show
 ```
-- will show all (possible)hunged calls for every sip env
+will show all (possible)hung calls for every sip env
 
-- how to download script on the particular server ?
+#### How to download script on the particular server ?
 ```bash
 wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/apalii/hcc/master/hcc.py
 ```
-- The same for all SIP servers ?
+#### The same for all SIP servers ?
 
 ```bash
 for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
@@ -51,7 +51,7 @@ do
 done
 ```
 
-- How I can disconnect calls with exceeded  duration ?
+#### How I can disconnect calls with exceeded duration ?
 ```bash
 for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
 do
