@@ -12,7 +12,7 @@ Script takes the following parameters :
 5) --debug - writes some additional information to the log file(/home/porta-one/call_monitor.log)
 ```
 
-It possible to use hcc.py without parameters in order to see list of the ip addresses of the available sip envs
+You can run `hcc.py` without parameters in order to see list of the ip addresses of the available sip envs
 on the current sip server.
 
 * It seems it is rare used stuff, I've made just for `practicing`.
@@ -29,7 +29,7 @@ without parameters it will show all sip envs on the current server
 ```bash
 sudo python2.7 hcc.py --ip 192.168.197.114 -d 600 --debug --disconnect
 ```
-will disconnect all calls with duration more then 60 seconds with debuging information. 
+will disconnect all calls with duration more then 600 seconds with debuging information. 
 
 ```bash
 sudo python2.7 hcc.py --debug --show
@@ -45,7 +45,7 @@ wget --no-check-certificate --content-disposition https://raw.githubusercontent.
 ```bash
 for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
 do
-    echo -e "\n\n---Master server: $i---\n"
+    echo -e "\n\n---SIP server: $i---\n"
     rsh_porta.sh $i '
     wget --no-check-certificate --content-disposition https://raw.githubusercontent.com/apalii/hcc/master/hcc.py'
 done
@@ -55,7 +55,7 @@ done
 ```bash
 for i in `mysql -uroot porta-configurator -sse "select ip from Servers where name like '%sip%'"`
 do
-    echo -e "\n\n---Server: $i---\n"
+    echo -e "\n\n---SIP server: $i---\n"
     rsh_porta.sh $i '
     sudo python2.7 hcc.py --debug --disconnect'
 done
