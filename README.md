@@ -14,9 +14,8 @@ Script takes the following parameters :
 
 You can run `hcc.py` without parameters in order to see list of the ip addresses of the available sip envs
 on the current sip server.
-
-* It seems it is rare used stuff, I've made just for `practicing`.
-
+Also, scripts writes all the needed information in the log file ('/home/porta-one/call_monitor.log').
+It seems it is rare used stuff, I've made just for `practice`.
 
 
 ## Examples :
