@@ -19,8 +19,7 @@ import sys
 try :
     import argparse
 except ImportError:
-    print 'use python2.7 or install argparse module'
-    sys.exit(1)
+    sys.exit('use python2.7 or install argparse module')
 
 parser = argparse.ArgumentParser(description='Hung call checker v.3')
 parser.add_argument("--ip", "-i", type=str,
@@ -57,9 +56,8 @@ def show_sip_envs():
             for sipenv in active_sipenvs_conf:
                 print sipenv.rstrip()
     else:
-        print 'There is no {} file.\nShould be runned on the SIP'.format(sipenvs)
         logger.debug('Can not find %s', sipenvs)
-        sys.exit(1)
+        sys.exit('There is no {} file.\nShould be runned on the SIP'.format(sipenvs))
 
 
 def get_durations(): 
@@ -84,6 +82,8 @@ def get_durations():
                     durations.append(line.rstrip()[16:])
                     break
     ips_durations = dict(zip(ips, durations))
+    if args.debug:
+        print ips_durations
     return ips_durations 
 
 
@@ -98,17 +98,16 @@ def duration_checker(host, duration=14440):
         telnet.write("show call list" + "\n")
         for i in telnet.read_until("OK").split("\n"):
             if re.search(pattern1, i):
-                uptime = re.findall(pattern, i)
+                uptime = re.findall(pattern2, i)
                 if int(uptime[0]) > duration:
                     uptime_list.append(''.join(uptime))
-                    call_id = re.findall(pattern, i)
+                    call_id = re.findall(pattern3, i)
                     call_id_list.append(''.join(call_id))
         calls = dict(zip(uptime_list, call_id_list))
         logger.debug('Connection to [%s] is established', host)
     except socket.error as err:
-        print 'Connection error due to {}'.format(err)
         logger.debug('Connection error due to [ %s ]', err)
-        sys.exit(1)
+        sys.exit('Connection error due to {}'.format(err))
 
     print "SIP {} | Analyzing calls ...".format(host)
     time.sleep(1)
